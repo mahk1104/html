@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Byte and Brew Cafe</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #b6121296;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgb(216, 124, 124);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        label, select, input {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #order-summary {
+            margin-top: 20px;
+            padding: 15px;
+            background: #eef;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Welcome to Byte and Brew Cafe!</h1>
+
+    <div class="container">
+        <h2>Place Your Order</h2>
+
+        <label for="name">Your Name:</label>
+        <input type="text" id="name" placeholder="Enter your name" required>
+
+        <label for="table">Table Number:</label>
+        <input type="number" id="table" placeholder="Enter table number" required>
+
+        <label for="category">Select Category:</label>
+        <select id="category">
+            <option value="food">Food</option>
+            <option value="drinks">Drinks</option>
+            <option value="books">Books</option>
+        </select>
+
+        <label for="item">Select Item:</label>
+        <select id="item">
+            <!-- Options will be added dynamically -->
+        </select>
+
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" value="1" min="1">
+
+        <button onclick="placeOrder()">Order Now</button>
+
+        <div id="order-summary">
+            <h3>Order Summary</h3>
+            <p id="summary-text">Your order will appear here.</p>
+        </div>
+    </div>
+
+    <script>
+        // Menu items with prices
+        const menu = {
+            food: {
+                "Cheese Sandwich": 4.85, "Cheesecake": 5.25, "Muffin": 3.65, "Chicken Bagel": 5.60
+            },
+            drinks: {
+                "Latte": 4.50, "Black Coffee": 2.00, "Frappuccino": 6.00, "Chai Tea": 4.50
+            },
+            books: {
+                "The Alchemist": 10.00, "Moby Dick": 12.00, "The Hobbit": 14.00, "1984": 21.00
+            }
+        };
+
+        // Update items based on selected category
+        function updateItems() {
+            const category = document.getElementById("category").value;
+            const itemSelect = document.getElementById("item");
+            itemSelect.innerHTML = ""; // Clear previous items
+
+            for (let item in menu[category]) {
+                let option = document.createElement("option");
+                option.value = item;
+                option.textContent = `${item} (£${menu[category][item].toFixed(2)})`;
+                itemSelect.appendChild(option);
+            }
+        }
+
+        // Place an order
+        function placeOrder() {
+            const name = document.getElementById("name").value;
+            const table = document.getElementById("table").value;
+            const category = document.getElementById("category").value;
+            const item = document.getElementById("item").value;
+            const quantity = document.getElementById("quantity").value;
+
+            if (!name || !table || !item || quantity < 1) {
+                alert("Please fill in all fields correctly.");
+                return;
+            }
+
+            const price = menu[category][item];
+            const total = price * quantity;
+
+            // Display order summary
+            document.getElementById("summary-text").innerHTML = 
+                `<strong>Name:</strong> ${name} <br>
+                 <strong>Table:</strong> ${table} <br>
+                 <strong>Item:</strong> ${quantity} x ${item} <br>
+                 <strong>Total Price:</strong> £${total.toFixed(2)}`;
+
+            alert("Order placed successfully!");
+        }
+
+        // Initialize items when page loads
+        updateItems();
+        document.getElementById("category").addEventListener("change", updateItems);
+    </script>
+
+</body>
+</html>
