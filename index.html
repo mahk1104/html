@@ -44,6 +44,13 @@
             background: #eef;
             border-radius: 5px;
         }
+        #item-image {
+            display: block;
+            margin: 10px auto;
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
     </style>
 </head>
 <body>
@@ -71,6 +78,8 @@
             <!-- Options will be added dynamically -->
         </select>
 
+        <img id="item-image" src="" alt="Selected Item" style="display: none;">
+
         <label for="quantity">Quantity:</label>
         <input type="number" id="quantity" value="1" min="1">
 
@@ -83,34 +92,57 @@
     </div>
 
     <script>
-        // Menu items with prices
         const menu = {
             food: {
-                "Cheese Sandwich": 4.85, "Cheesecake": 5.25, "Muffin": 3.65, "Chicken Bagel": 5.60
+                "Cheese Sandwich": { price: 4.85, image: "images/cheese-sandwich.jpg" },
+                "Cheesecake": { price: 5.25, image: "images/cheesecake.jpg" },
+                "Muffin": { price: 3.65, image: "images/muffin.jpg" },
+                "Chicken Bagel": { price: 5.60, image: "images/chicken-bagel.jpg" }
             },
             drinks: {
-                "Latte": 4.50, "Black Coffee": 2.00, "Frappuccino": 6.00, "Chai Tea": 4.50
+                "Latte": { price: 4.50, image: "images/latte.jpg" },
+                "Black Coffee": { price: 2.00, image: "images/black-coffee.jpg" },
+                "Frappuccino": { price: 6.00, image: "images/frappuccino.jpg" },
+                "Chai Tea": { price: 4.50, image: "images/chai-tea.jpg" }
             },
             books: {
-                "The Alchemist": 10.00, "Moby Dick": 12.00, "The Hobbit": 14.00, "1984": 21.00
+                "The Alchemist": { price: 10.00, image: "images/alchemist.jpg" },
+                "Moby Dick": { price: 12.00, image: "images/moby-dick.jpg" },
+                "The Hobbit": { price: 14.00, image: "images/hobbit.jpg" },
+                "1984": { price: 21.00, image: "images/1984.jpg" }
             }
         };
 
-        // Update items based on selected category
         function updateItems() {
             const category = document.getElementById("category").value;
             const itemSelect = document.getElementById("item");
-            itemSelect.innerHTML = ""; // Clear previous items
+            const itemImage = document.getElementById("item-image");
+            itemSelect.innerHTML = "";
 
             for (let item in menu[category]) {
                 let option = document.createElement("option");
                 option.value = item;
-                option.textContent = `${item} (£${menu[category][item].toFixed(2)})`;
+                option.textContent = `${item} (£${menu[category][item].price.toFixed(2)})`;
                 itemSelect.appendChild(option);
+            }
+
+            // Update the image when the first option loads
+            updateImage();
+        }
+
+        function updateImage() {
+            const category = document.getElementById("category").value;
+            const item = document.getElementById("item").value;
+            const itemImage = document.getElementById("item-image");
+
+            if (menu[category][item]) {
+                itemImage.src = menu[category][item].image;
+                itemImage.style.display = "block";
+            } else {
+                itemImage.style.display = "none";
             }
         }
 
-        // Place an order
         function placeOrder() {
             const name = document.getElementById("name").value;
             const table = document.getElementById("table").value;
@@ -123,10 +155,9 @@
                 return;
             }
 
-            const price = menu[category][item];
+            const price = menu[category][item].price;
             const total = price * quantity;
 
-            // Display order summary
             document.getElementById("summary-text").innerHTML = 
                 `<strong>Name:</strong> ${name} <br>
                  <strong>Table:</strong> ${table} <br>
@@ -136,9 +167,9 @@
             alert("Order placed successfully!");
         }
 
-        // Initialize items when page loads
-        updateItems();
         document.getElementById("category").addEventListener("change", updateItems);
+        document.getElementById("item").addEventListener("change", updateImage);
+        updateItems();
     </script>
 
 </body>
